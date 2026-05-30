@@ -11,7 +11,7 @@ const concertsRoutes = require('./routes/concerts.routes');
 const seatsRoutes = require('./routes/seats.routes');
 const Seat = require('./models/seat.model');
 
-mongoose.connect('mongodb://0.0.0.0:27017/NewWaveDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://kodilla:Vrl0JHnvmBecFFuc@cluster0.x0uesmn.mongodb.net/NewWaveDB?appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
