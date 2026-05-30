@@ -21,17 +21,17 @@ const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
   }
 
   const prepareSeat = (seatId) => {
-    if(seatId === chosenSeat) return <Button key={seatId} className="seats__seat" color="primary">{seatId}</Button>;
-    else if(isTaken(seatId)) return <Button key={seatId} className="seats__seat" disabled color="secondary">{seatId}</Button>;
-    else return <Button key={seatId} color="primary" className="seats__seat" outline onClick={(e) => updateSeat(e, seatId)}>{seatId}</Button>;
+    if(seatId === chosenSeat) return <Button key={seatId} type="button" className="seats__seat" color="primary">{seatId}</Button>;
+    else if(isTaken(seatId)) return <Button key={seatId} type="button" className="seats__seat" disabled color="secondary">{seatId}</Button>;
+    else return <Button key={seatId} type="button" color="primary" className="seats__seat" outline onClick={(e) => updateSeat(e, seatId)}>{seatId}</Button>;
   }
 
   return (
     <div>
       <h3>Pick a seat</h3>
       <div className="mb-4">
-        <small id="pickHelp" className="form-text text-muted ms-2"><Button color="secondary" /> – seat is already taken</small>
-        <small id="pickHelpTwo" className="form-text text-muted ms-2"><Button outline color="primary" /> – it's empty</small>
+        <small id="pickHelp" className="form-text text-muted ms-2"><Button type="button" color="secondary" /> – seat is already taken</small>
+        <small id="pickHelpTwo" className="form-text text-muted ms-2"><Button type="button" outline color="primary" /> – it's empty</small>
       </div>
       { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].success) && <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i+1) )}</div>}
       { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].pending) && <Progress animated color="primary" value={50} /> }
