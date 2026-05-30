@@ -14,6 +14,11 @@ router.route('/seats/:id').get((req, res) => {
 
 router.route('/seats').post((req, res) => {
   const { day, seat, client, email } = req.body;
+  const isTaken = db.seats.some((item) => Number(item.day) === Number(day) && Number(item.seat) === Number(seat));
+
+  if (isTaken) {
+    return res.status(409).json({ message: 'The slot is already taken...' });
+  }
 
   db.seats.push({
     id: getRandomId(),
@@ -50,4 +55,3 @@ router.route('/seats/:id').delete((req, res) => {
 });
 
 module.exports = router;
-
