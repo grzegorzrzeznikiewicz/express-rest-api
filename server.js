@@ -2,13 +2,23 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const socket = require('socket.io');
+const mongoose = require('mongoose');
 
 const app = express();
 
 const testimonialsRoutes = require('./routes/testimonials.routes');
 const concertsRoutes = require('./routes/concerts.routes');
 const seatsRoutes = require('./routes/seats.routes');
-const db = require('./db');
+const Seat = require('./models/seat.model');
+
+mongoose.connect('mongodb://0.0.0.0:27017/NewWaveDB', { useNewUrlParser: true, useUnifiedTopology: true });
+const db = mongoose.connection;
+
+db.once('open', () => {
+  console.log('Connected to the database');
+});
+
+db.on('error', err => console.log('Error ' + err));
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -20,9 +30,9 @@ const server = app.listen(process.env.PORT || 8000, () => {
 
 const io = socket(server);
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   console.log('New socket!');
-  socket.emit('seatsUpdated', db.seats);
+  socket.emit('seatsUpdated', await Seat.find({}));
 });
 
 app.use((req, res, next) => {
