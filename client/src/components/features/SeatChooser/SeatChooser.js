@@ -1,19 +1,25 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Progress, Alert } from 'reactstrap';
-import { getSeats, loadSeatsRequest, getRequests } from '../../../redux/seatsRedux';
+import { io } from 'socket.io-client';
+import { getSeats, loadSeatsRequest, loadSeats, getRequests } from '../../../redux/seatsRedux';
 import './SeatChooser.scss';
 
 const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
   const dispatch = useDispatch();
   const seats = useSelector(getSeats);
   const requests = useSelector(getRequests);
-  
+  const totalSeats = 50;
+  const takenSeats = seats.filter(item => (Number(item.day) === Number(chosenDay))).length;
+  const freeSeats = totalSeats - takenSeats;
+
   useEffect(() => {
     dispatch(loadSeatsRequest());
-    const interval = setInterval(() => dispatch(loadSeatsRequest()), 120000);
+    const socket = io(process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:8000');
 
-    return () => clearInterval(interval);
+    socket.on('seatsUpdated', (updatedSeats) => dispatch(loadSeats(updatedSeats)));
+
+    return () => socket.disconnect();
   }, [dispatch])
 
   const isTaken = (seatId) => {
@@ -34,6 +40,7 @@ const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
         <small id="pickHelpTwo" className="form-text text-muted ms-2"><Button type="button" outline color="primary" /> – it's empty</small>
       </div>
       { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].success) && <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i+1) )}</div>}
+      { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].success) && <p>Free seats: {freeSeats}/{totalSeats}</p>}
       { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].pending) && <Progress animated color="primary" value={50} /> }
       { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].error) && <Alert color="warning">Couldn't load seats...</Alert> }
     </div>

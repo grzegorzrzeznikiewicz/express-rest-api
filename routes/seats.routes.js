@@ -28,6 +28,8 @@ router.route('/seats').post((req, res) => {
     email,
   });
 
+  req.io.emit('seatsUpdated', db.seats);
+
   res.json({ message: 'OK' });
 });
 
@@ -39,6 +41,7 @@ router.route('/seats/:id').put((req, res) => {
     item.seat = req.body.seat;
     item.client = req.body.client;
     item.email = req.body.email;
+    req.io.emit('seatsUpdated', db.seats);
   }
 
   res.json({ message: 'OK' });
@@ -49,6 +52,7 @@ router.route('/seats/:id').delete((req, res) => {
 
   if (index !== -1) {
     db.seats.splice(index, 1);
+    req.io.emit('seatsUpdated', db.seats);
   }
 
   res.json({ message: 'OK' });
