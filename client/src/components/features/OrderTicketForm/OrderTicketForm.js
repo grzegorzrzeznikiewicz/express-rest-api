@@ -20,16 +20,19 @@ const OrderTicketForm = () => {
 
   const updateSeat = (e, seatId) => {
     e.preventDefault();
+    setIsError(false);
     setOrder({ ...order, seat: seatId });
   }
 
   const updateTextField = ({ target }) => {
     const { value, name } = target;
+    setIsError(false);
     setOrder({ ...order, [name]: value });
   }
 
   const updateNumberField = ({ target }) => {
     const { value, name } = target;
+    setIsError(false);
     setOrder({ ...order, [name]: parseInt(value) });
   }
 
